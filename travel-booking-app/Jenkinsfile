@@ -19,7 +19,9 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'mvn clean package -DskipTests'
+                dir('travel-booking-app') {
+            sh 'mvn clean package -DskipTests'
+        }
             }
         }
 
