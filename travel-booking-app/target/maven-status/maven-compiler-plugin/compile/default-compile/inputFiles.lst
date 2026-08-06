@@ -1,1 +1,6 @@
 /home/ubuntu/travel-booking-app/travel-booking-app/src/main/java/com/example/travel/App.java
+/home/ubuntu/travel-booking-app/travel-booking-app/src/main/java/com/example/travel/TravelBookingApplication.java
+/home/ubuntu/travel-booking-app/travel-booking-app/src/main/java/com/example/travel/controller/BookingController.java
+/home/ubuntu/travel-booking-app/travel-booking-app/src/main/java/com/example/travel/model/Booking.java
+/home/ubuntu/travel-booking-app/travel-booking-app/src/main/java/com/example/travel/repository/BookingRepository.java
+/home/ubuntu/travel-booking-app/travel-booking-app/src/main/java/com/example/travel/service/BookingService.java
