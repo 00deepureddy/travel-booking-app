@@ -13,7 +13,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/waghmareswapnil21/travel-booking-app.git'
+                    url: 'https://github.com/00deepureddy/travel-booking-app.git'
             }
         }
 
