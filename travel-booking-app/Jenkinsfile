@@ -4,7 +4,7 @@ pipeline {
 
 
     environment {
-        IMAGE_NAME = "swapnilwaghmare/travel-booking-app"
+        IMAGE_NAME = "sandeephalemani3946/travel-booking-app"
         IMAGE_TAG = "${BUILD_NUMBER}"
     }
 
