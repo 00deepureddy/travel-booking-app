@@ -23,7 +23,7 @@ spec:
 
       - name: travel-booking-app
 
-        image: dockerhub/travel-booking-app:5
+        image: sandeephalemani3946/travel-booking-app:5
 
         imagePullPolicy: Always
 
