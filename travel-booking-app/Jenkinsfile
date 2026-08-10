@@ -4,6 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = "sandeephalemani3946/travel-booking-app"
         IMAGE_TAG = "${BUILD_NUMBER}"
+        FULL_IMAGE = "${IMAGE_NAME}:${BUILD_NUMBER}"
     }
 
     stages {
@@ -17,39 +18,51 @@ pipeline {
 
         stage('Build') {
             steps {
-                dir('travel-booking-app') {
-                    sh 'mvn clean package -DskipTests'
-                }
+                sh '''
+                    echo "Building application..."
+                    mvn clean package -DskipTests
+                '''
             }
         }
 
         stage('Unit Test') {
             steps {
-                dir('travel-booking-app') {
-                    sh 'mvn test'
-                }
+                sh '''
+                    echo "Running unit tests..."
+                    mvn test
+                '''
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                dir('travel-booking-app') {
-                    sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG .'
-                }
+                sh '''
+                    echo "Building Docker image..."
+                    docker build -t $FULL_IMAGE .
+                '''
             }
         }
 
         stage('Push Docker Image') {
             steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'dockerhub',
-                    usernameVariable: 'DOCKER_USER',
-                    passwordVariable: 'DOCKER_PASS'
-                )]) {
-
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub',
+                        usernameVariable: 'DOCKER_USER',
+                        passwordVariable: 'DOCKER_PASS'
+                    )
+                ]) {
                     sh '''
-                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                    docker push $IMAGE_NAME:$IMAGE_TAG
+                        echo "$DOCKER_PASS" | docker login \
+                            -u "$DOCKER_USER" \
+                            --password-stdin
+
+                        echo "Pushing image:"
+                        echo "$FULL_IMAGE"
+
+                        docker push "$FULL_IMAGE"
+
+                        docker logout
                     '''
                 }
             }
@@ -57,24 +70,46 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                dir('travel-booking-app') {
-                    sh '''
+                sh '''
+                    echo "Checking Kubernetes connection..."
+                    kubectl get nodes
+
+                    echo "Applying Kubernetes deployment..."
                     kubectl apply -f k8s/deployment.yaml
+
+                    echo "Updating deployment with new Docker image..."
+                    kubectl set image deployment/travel-booking-deployment \
+                        travel-booking-app=$FULL_IMAGE
+
+                    echo "Applying Kubernetes service..."
                     kubectl apply -f k8s/service.yaml
-                    '''
-                }
+
+                    echo "Waiting for deployment..."
+                    kubectl rollout status deployment/travel-booking-deployment
+
+                    echo "Pods:"
+                    kubectl get pods
+
+                    echo "Services:"
+                    kubectl get services
+                '''
             }
         }
-
     }
 
     post {
+
         success {
-            echo 'Pipeline executed successfully.'
+            echo "======================================"
+            echo "Pipeline executed successfully!"
+            echo "Docker Image: ${FULL_IMAGE}"
+            echo "======================================"
         }
 
         failure {
-            echo 'Pipeline failed.'
+            echo "======================================"
+            echo "Pipeline failed!"
+            echo "======================================"
         }
     }
 }
