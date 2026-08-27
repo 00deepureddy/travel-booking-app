@@ -35,10 +35,10 @@ spec:
         env:
 
         - name: SPRING_DATASOURCE_URL
-          value: jdbc:mysql://database.cfsw6q6460hk.ap-south-1.rds.amazonaws.com:3306/traveldb
+          value: jdbc:mysql://database-travel.criqmogw2ki1.ap-south-1.rds.amazonaws.com:3306/traveldb
 
         - name: SPRING_DATASOURCE_USERNAME
           value: admin
 
         - name: SPRING_DATASOURCE_PASSWORD
-          value: admin
+          value: Deepu3946
